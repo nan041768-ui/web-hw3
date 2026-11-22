@@ -96,6 +96,11 @@ function refresh() {
    renderCards(getView()); 
 }
 
+// 찜한 제목 배열을 브라우저에 저장하고 불러오기(교재에 없는 문법: localStorage, JSON)
+const liked = JSON.parse(localStorage.getItem("liked") || "[]");
+function saveLiked() {
+   localStorage.setItem("liked", JSON.stringify(liked));
+}
 
 refresh();
 
@@ -103,3 +108,24 @@ refresh();
 document.querySelector("#q").addEventListener("input", refresh);
 document.querySelector("#sort").addEventListener("change", refresh);
 document.querySelector("#typeFilter").addEventListener("change", refresh);
+
+
+// 보드 클릭 감지, 찜 토글 동작
+document.querySelector("#board").addEventListener("click", (e) => {    //리스너(이벤트 위임) 생성 
+   const card = e.target.closest(".card");
+   if (!card) return;
+
+   const title = card.getAttribute("data-title");
+
+   if (e.target.closest(".like")) { //찜
+      const i = liked.indexOf(title);
+      if (i === -1) {
+         liked.push(title);
+      } else {
+         liked.splice(i, 1);
+      }
+      saveLiked();
+      refresh();
+      return;
+   }
+});
