@@ -1,3 +1,5 @@
+const dialog = document.getElementById("detail");
+
 // web-hw2_sortBy : 배열, 키 이름, 내림차순 여부 (참/거짓)
 function sortBy(list, key, desc) {
    return [...list].sort((a, b) => {
@@ -92,9 +94,32 @@ function getView() {
    return sortBy(result, sortKey, sortKey !== "title");
 }
 
-function refresh() { 
-   renderCards(getView()); 
+function refresh() {
+   renderCards(getView());
 }
+
+
+
+// openDetail : 영화 제목 -> 상세 팝업 내용 채우기 및 열기
+function openDetail(title) {
+   const m = movies.find(item => item.title === title);
+   if (!m) return;
+
+   const posterHtml = m.poster
+      ? `<img src="${posterUrl(m.poster, "w500")}" alt="${m.title} 포스터">`
+      : "";
+
+   document.getElementById("detailBody").innerHTML = `
+      ${posterHtml}
+      <h2>${m.title}</h2>
+      <p>개봉일: ${m.date} | 평점: ${m.rating}</p>
+      <p>${m.overview}</p>
+   `;
+   dialog.showModal();
+}
+
+
+
 
 // 찜한 제목 배열을 브라우저에 저장하고 불러오기(교재에 없는 문법: localStorage, JSON)
 const liked = JSON.parse(localStorage.getItem("liked") || "[]");
@@ -112,6 +137,9 @@ document.querySelector("#typeFilter").addEventListener("change", refresh);
 
 // 보드 클릭 감지, 찜 토글 동작
 document.querySelector("#board").addEventListener("click", (e) => {    //리스너(이벤트 위임) 생성 
+   document.getElementById("closeDetail").addEventListener("click", () => {
+      dialog.close();
+   });
    const card = e.target.closest(".card");
    if (!card) return;
 
@@ -128,4 +156,5 @@ document.querySelector("#board").addEventListener("click", (e) => {    //리스�
       refresh();
       return;
    }
+   openDetail(title);
 });

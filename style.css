@@ -229,5 +229,13 @@ footer {
 
 .state-empty {
    display: none;
-   color: #fff;
+}
+
+.board.is-empty+.state-empty {
+   display: block;
+}
+
+/* ----[ 추가: 팝업 뒷배경 어둡게 처리]----------*/
+dialog::backdrop {
+   background: rgba(0, 0, 0, 0.7);
 }
