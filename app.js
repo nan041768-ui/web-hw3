@@ -32,16 +32,45 @@ function renderCards(list) {
       const card = document.createElement("article");
       card.className = "card";
       if (m.rating >= 8) { card.classList.add("hot"); }
-      card.innerHTML = `<img class="poster" src="${posterUrl(m.poster, "w342")}" alt = "${m.title} 포스터" >
-      <span class="badge">${m.rating}</span> 
-      
-      <div class="info">     
-      <h2>${m.title}</h2>     
-      <p class="year">${m.year}</p>     
-      <button class="like" type="button">♥</button>  
-      </div>`;
+
+      // (나) 카드별 종류·제목 이름
+      card.setAttribute("data-type", m.type);
+      card.setAttribute("data-title", m.title);
+
+      // (다) 박스오피스 카드에만 순위 배지
+      const rankHtml = m.type === "boxoffice" ? `<span class="rank">${m.rank}</span>` : "";
+
+      // (라) 포스터 null 확인/ 대체 표지
+      let posterHtml = "";
+      if (m.poster === null) {
+         card.classList.add("no-poster");
+         posterHtml = `<div class="poster-fallback">${m.title[0]}</div>`;
+      } else {
+         posterHtml = `<img class="poster" src="${posterUrl(m.poster, "w342")}" alt="${m.title} 포스터">`;
+      }
+
+      // (가) 제목 태그 h3
+      card.innerHTML = `
+         ${posterHtml}
+         ${rankHtml}
+         <span class="badge">${m.rating}</span>
+         <div class="info">
+            <h3>${m.title}</h3>
+            <p class="year">${m.year}</p>
+            <button class="like" type="button">♥</button>
+         </div>`;
       board.appendChild(card);
    }
-   if (list.length === 0) { board.classList.add("is-empty"); } else { board.classList.remove("is-empty"); }
+
+   if (list.length === 0) {
+      board.classList.add("is-empty");
+   } else {
+      board.classList.remove("is-empty");
+   }
    document.querySelector("#count").textContent = list.length + "편";
 }
+
+renderCards(movies); 
+// 카드 10장이 보임 
+// Elements 탭에서 카드마다 data-type 있음 
+// 순위 배지: 박스오피스 카드에만 있음
